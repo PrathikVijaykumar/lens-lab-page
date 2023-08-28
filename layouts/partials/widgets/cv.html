@@ -1,0 +1,43 @@
+{{ $ := .root }}
+{{ $page := .page }}
+
+{{ $author := "" }}
+{{ if .author }}
+  {{ $author = .author }}
+{{ else }}
+  {{ $author = $page.Params.author }}
+{{end}}
+
+{{ $person_page_path := (printf "/authors/%s" $author) }}
+{{ $person_page := site.GetPage $person_page_path }}
+{{ if not $person_page }}
+  {{ errorf "Could not find an author page at `%s`. Please check the value of `author` in your About widget and create an associated author page if one does not already exist. See https://wowchemy.com/docs/page-builder/#about " $person_page_path }}
+{{end}}
+{{ $person := $person_page.Params }}
+{{ $avatar := ($person_page.Resources.ByType "image").GetMatch "*lens*" }}
+{{ $avatar_shape := site.Params.features.avatar.shape | default "circle" }}
+
+<!-- About widget -->
+<div class="row">
+  <div class="col-12 col-lg-4">
+
+    <div class="widget-title">
+      {{/* Only display widget title in explicit instances of about widget, not in author pages. */}}
+  {{ if and $page.Params.widget $page.Title }}<h1>{{ $page.Title | markdownify | emojify }}</h1>{{ end }}
+     </div>
+  </div>
+  <div class="col-12 col-lg-8">
+
+    {{ with $person.interests }}
+    <p style="font-size: 24px;">{{ . | markdownify | emojify }}</p>
+    {{ end }}
+
+    {{ $avatar_image := $avatar.Fill "897x251" }}
+    <img width="{{ $avatar_image.Width }}" height="{{ $avatar_image.Height }}"
+           src="{{ $avatar_image.RelPermalink }}" alt="robot in lab">
+    
+    <p style="font-size: 24px;">The lab is supported through the sponsorship of several organizations including Department of Electrical and Computer Engineering at Texas A&M University, National Instruments, Google, the National Science Foundation, and The US Army Futures Command, among others.</p>
+  
+       
+  </div>
+</div>

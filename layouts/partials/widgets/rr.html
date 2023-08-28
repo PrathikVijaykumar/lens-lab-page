@@ -1,0 +1,42 @@
+{{ $ := .root }}
+{{ $page := .page }}
+
+{{ $author := "" }}
+{{ if .author }}
+  {{ $author = .author }}
+{{ else }}
+  {{ $author = $page.Params.author }}
+{{end}}
+
+{{ $person_page_path := (printf "/authors/%s" $author) }}
+{{ $person_page := site.GetPage $person_page_path }}
+{{ if not $person_page }}
+  {{ errorf "Could not find an author page at `%s`. Please check the value of `author` in your About widget and create an associated author page if one does not already exist. See https://wowchemy.com/docs/page-builder/#about " $person_page_path }}
+{{end}}
+{{ $person := $person_page.Params }}
+{{ $avatar := ($person_page.Resources.ByType "image").GetMatch "*lens*" }}
+{{ $avatar_shape := site.Params.features.avatar.shape | default "circle" }}
+
+<!-- About widget -->
+<div class="row">
+  <div class="widget-title col-12 col-lg-4">
+      {{/* Only display widget title in explicit instances of about widget, not in author pages. */}}
+      {{ if and $page.Params.widget $page.Title }}<h1>{{ $page.Title | markdownify | emojify }}</h1>{{ end }} 
+  </div>
+  <div class="col-12 col-lg-8">
+      <h2>Aggie DeepRacers</h2>
+      <p style="font-size: 24px;">This is an initiative specifically aimed at applied machine learning in a robotics context using the <a href="https://aws.amazon.com/deepracer/">Amazon DeepRacer platform</a>.</p>
+      
+      <h2>Teaching</h2>
+      <p style="font-size: 24px;">Several courses taught by the faculty involved formally include application development on different platforms. These include:</p>
+      <ul>
+          <li style="font-size: 24px;">ECEN 424 Fundamentals of Networking</li>
+          <li style="font-size: 24px;">ECEN 489 Artificial Intelligence</li>
+          <li style="font-size: 24px;">ECEN 489 Mobile Applications with Android</li>
+          <li style="font-size: 24px;">ECEN 689 Reinforcement Learning</li>
+      </ul>
+
+      <h2>Research</h2>
+      <p style="font-size: 24px;">The faculty involved each has their own research program. Prof. Shakkottai’s research interests include caching and content distribution, wireless networks, multi-agent learning and game theory, reinforcement learning, as well as network data analytics.</p>
+  </div>
+</div>
